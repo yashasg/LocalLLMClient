@@ -3,6 +3,7 @@
 #define LOG_WRN(...)
 #define LOG_ERR(...)
 #define LOG_DBG(...)
+#define LOG_TRC(...)
 #define LOG_INF(...)
 
 #define LOG_DEFAULT_LLAMA 0

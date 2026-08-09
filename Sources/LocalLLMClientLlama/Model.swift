@@ -11,13 +11,14 @@ final class Model {
         llama_model_get_vocab(model)
     }
 
-    init(url: URL) throws(LLMError) {
+    init(
+        url: URL,
+        gpuLayerCount: Int32?) throws(LLMError)
+    {
         var model_params = llama_model_default_params()
-#if targetEnvironment(simulator)
-        model_params.n_gpu_layers = 0
-#endif
-        model_params.use_mmap = true
-
+        if let gpuLayerCount {
+            model_params.n_gpu_layers = gpuLayerCount
+        }
         guard let model = llama_model_load_from_file(url.path(percentEncoded: false), model_params) else {
             throw .failedToLoad(reason: "Failed to load model from file")
         }

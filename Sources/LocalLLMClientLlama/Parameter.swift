@@ -10,6 +10,7 @@ public extension LlamaClient {
         ///   - context: The size of the context window in tokens. Default is `2048`.
         ///   - seed: The random seed for generation. `nil` means a random seed will be used. Default is `nil`.
         ///   - numberOfThreads: The number of threads to use for generation. `nil` means the optimal number of threads will be chosen. Default is `nil`.
+        ///   - gpuLayerCount: The number of model layers to offload to the GPU. `nil` uses llama.cpp's default.
         ///   - batch: The batch size for prompt processing. Default is `512`.
         ///   - temperature: Controls randomness in sampling. Lower values make the model more deterministic. Default is `0.8`.
         ///   - topK: Limits sampling to the K most likely tokens. Default is `40`.
@@ -22,6 +23,7 @@ public extension LlamaClient {
             context: Int = 2048,
             seed: Int? = nil,
             numberOfThreads: Int? = nil,
+            gpuLayerCount: Int32? = nil,
             batch: Int = 512,
             temperature: Float = 0.8,
             topK: Int = 40,
@@ -34,6 +36,7 @@ public extension LlamaClient {
             self.context = context
             self.seed = seed
             self.numberOfThreads = numberOfThreads
+            self.gpuLayerCount = gpuLayerCount
             self.batch = batch
             self.temperature = temperature
             self.topK = topK
@@ -50,6 +53,8 @@ public extension LlamaClient {
         public var seed: Int?
         /// The number of threads to use for generation. `nil` means the optimal number of threads will be chosen.
         public var numberOfThreads: Int?
+        /// The number of model layers to offload to the GPU. `nil` uses llama.cpp's default.
+        public var gpuLayerCount: Int32?
         /// The batch size for prompt processing.
         public var batch: Int
         /// Controls randomness in sampling. Lower values make the model more deterministic.

@@ -46,7 +46,9 @@ public final class Context: @unchecked Sendable {
 
         self.parameter = parameter
         self.pauseHandler = PauseHandler(disableAutoPause: parameter.options.disableAutoPause)
-        self.model = try Model(url: url)
+        self.model = try Model(
+            url: url,
+            gpuLayerCount: parameter.gpuLayerCount)
         self.context = try model.makeAndAllocateContext(with: ctx_params)
         batch = llama_batch_init(Int32(parameter.batch), 0, 1)
         extraEOSTokens = parameter.options.extraEOSTokens
@@ -79,7 +81,14 @@ public final class Context: @unchecked Sendable {
         llama_sampler_chain_add(sampling, llama_sampler_init_top_p(parameter.topP, minKeep))
         llama_sampler_chain_add(sampling, llama_sampler_init_min_p(1 - parameter.topP, 1))
         llama_sampler_chain_add(sampling, llama_sampler_init_typical(parameter.typicalP, minKeep))
-        llama_sampler_chain_add(sampling, llama_sampler_init_penalties(Int32(parameter.penaltyLastN), parameter.penaltyRepeat, penaltyFreq, penaltyPresent))
+        llama_sampler_chain_add(
+            sampling,
+            llama_sampler_init_penalties(
+                llama_vocab_n_tokens(model.vocab),
+                Int32(parameter.penaltyLastN),
+                parameter.penaltyRepeat,
+                penaltyFreq,
+                penaltyPresent))
         llama_sampler_chain_add(sampling, llama_sampler_init_dist(parameter.seed.map(UInt32.init) ?? LLAMA_DEFAULT_SEED))
 
         cursorPointer = .allocate(capacity: Int(llama_vocab_n_tokens(model.vocab)))

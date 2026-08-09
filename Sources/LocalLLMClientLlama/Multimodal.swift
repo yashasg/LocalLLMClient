@@ -41,7 +41,11 @@ public class MultimodalContext: @unchecked Sendable {
 
         let textStorage = "    \(String(cString: mtmd_default_marker()))    " // spaces for the workaround of tokenizer
         var text = textStorage.withCString {
-            mtmd_input_text(text: $0, add_special: false, parse_special: true)
+            mtmd_input_text(
+                text: $0,
+                text_len: textStorage.utf8.count,
+                add_special: false,
+                parse_special: true)
         }
 
         guard mtmd_tokenize(multimodalContext, chunks, &text, &bitmaps, bitmaps.count) == 0 else {
@@ -88,7 +92,9 @@ package extension Context {
             position,
             0, // seq_id
             Int32(parameter.batch),
-            &newPosition) == 0 else {
+            &newPosition,
+            nil,
+            nil) == 0 else {
             throw .failedToDecode(reason: "Failed to decode image")
         }
     }
